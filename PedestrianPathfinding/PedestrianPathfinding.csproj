@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFramework>net472</TargetFramework>
-		<LangVersion>11.0</LangVersion>
+		<LangVersion>12.0</LangVersion>
 		<Nullable>Enable</Nullable>
 		<Configurations>Debug;Release</Configurations>
 
@@ -27,6 +27,9 @@
 	
 	<ItemGroup>
 		<Reference Include="Game">
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Colossal.AssetPipeline">
 			<Private>false</Private>
 		</Reference>
 		<Reference Include="Colossal.Core">

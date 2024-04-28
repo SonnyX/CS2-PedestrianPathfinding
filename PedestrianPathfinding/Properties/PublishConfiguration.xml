@@ -7,7 +7,9 @@
 	<ShortDescription Value="Modifies pedestrian pathfinding behavior to discourage jaywalking" />
 	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
 	<LongDescription>
-A mod that modifies pedestrian pathfinding weights to heavily discourage unsafe behaviour.
+Have you ever been frustrated by the chaotic and unsafe behavior of pedestrians in your favorite simulation game? From jaywalking to reckless crossings, managing pedestrian traffic can often feel like herding cats. But fear not, because with Pedestrian Pathfinding, you now have the tools to encourage safe and orderly behavior among your virtual citizens.
+
+This mod works by modifying the pathfinding weights of pedestrians, making them heavily prioritize safe and efficient routes while strongly discouraging risky behavior. No longer will your streets be plagued by pedestrians darting across busy intersections or ignoring designated crosswalks. Instead, they'll intelligently navigate sidewalks, crosswalks, and pedestrian bridges, contributing to a smoother and safer urban environment.
 	</LongDescription>
 	<!--Thumbnail-->
 	<Thumbnail Value="Properties/thumbnail.png" />
