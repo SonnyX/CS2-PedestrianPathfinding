@@ -26,7 +26,8 @@ public partial class PedestrianPathfindSystem : GameSystemBase
 
         var m_UnsafeCrosswalkCost = new PathfindCosts(time: 0f, behaviour: 500f, money: 0f, comfort: 50f);
 
-        var entities = EntityManager.CreateEntityQuery(ComponentType.ReadWrite<PathfindPedestrianData>()).ToEntityArray(Unity.Collections.Allocator.Persistent);
+        using var query = EntityManager.CreateEntityQuery(ComponentType.ReadWrite<PathfindPedestrianData>());
+        var entities = query.ToEntityArray(Unity.Collections.Allocator.Persistent);
 
         foreach (var entity in entities)
         {
