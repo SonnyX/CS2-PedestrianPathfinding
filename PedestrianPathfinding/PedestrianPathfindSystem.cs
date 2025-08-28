@@ -1,48 +1,46 @@
-﻿using Colossal.Logging;
-using Colossal.Serialization.Entities;
+using Colossal.Logging;
 using Game;
 using Game.Pathfind;
-using Game.Prefabs;
 using Unity.Entities;
 
 namespace PedestrianPathfinding;
 
 public partial class PedestrianPathfindSystem : GameSystemBase
 {
-    public override int GetUpdateInterval(SystemUpdatePhase phase)
-    {
-        return base.GetUpdateInterval(phase);
-    }
-
-    protected override void OnUpdate()
-    {
-    }
+    // We can remove the GetUpdateInterval and OnUpdate methods
+    // if they are empty, as the base class handles them.
 
     protected override void OnGameLoadingComplete(Purpose purpose, GameMode mode)
     {
         base.OnGameLoadingComplete(purpose, mode);
         ILog log = LogManager.GetLogger(nameof(PedestrianPathfinding)).SetShowsErrorsInUI(true);
-        log.Info($"Loading {purpose}, where mode is {mode}");
 
-        var m_UnsafeCrosswalkCost = new PathfindCosts(time: 0f, behaviour: 500f, money: 0f, comfort: 50f);
-
-        using var query = EntityManager.CreateEntityQuery(ComponentType.ReadWrite<PathfindPedestrianData>());
-        var entities = query.ToEntityArray(Unity.Collections.Allocator.Persistent);
-
-        foreach (var entity in entities)
+        // We only want this logic to run when loading a game, not in the editor
+        if (mode != GameMode.Game)
         {
-            var oldCosts = EntityManager.GetComponentData<PathfindPedestrianData>(entity);
-
-            log.Info($"OnGameLoadingComplete - Setting pedestrian walking costs for prefab, changing from: {oldCosts.m_UnsafeCrosswalkCost.m_Value} to: {m_UnsafeCrosswalkCost.m_Value}");
-
-            PathfindPedestrianData componentData = default;
-            componentData.m_WalkingCost = oldCosts.m_WalkingCost;
-            componentData.m_CrosswalkCost = oldCosts.m_CrosswalkCost;
-            componentData.m_UnsafeCrosswalkCost = m_UnsafeCrosswalkCost;
-            componentData.m_SpawnCost = oldCosts.m_SpawnCost;
-            EntityManager.SetComponentData(entity, componentData);
+            return;
         }
 
-        entities.Dispose();
+        log.Info("Applying custom pedestrian pathfinding costs...");
+
+        // This is a more direct way to get the single entity with pedestrian pathfinding data
+        if (SystemAPI.TryGetSingletonRW<PathfindPedestrianData>(out var componentRef))
+        {
+            // By using "ref", we get a direct reference to the game's data, not a copy
+            ref PathfindPedestrianData pedestrianData = ref componentRef.ValueRW;
+            
+            // Log the original value before we change it
+            log.Info($"Original UnsafeCrosswalkCost 'behaviour' value: {pedestrianData.m_UnsafeCrosswalkCost.m_Value.x}");
+
+            // The PathfindCosts are stored in a vector (behaviour, comfort, time, money).
+            // We are changing the 'x' component, which corresponds to the 'behaviour' cost.
+            pedestrianData.m_UnsafeCrosswalkCost.m_Value.x = 500f;
+
+            log.Info($"New UnsafeCrosswalkCost 'behaviour' value set to: {pedestrianData.m_UnsafeCrosswalkCost.m_Value.x}");
+        }
+        else
+        {
+            log.Warn("Could not find PathfindPedestrianData singleton to modify.");
+        }
     }
 }
